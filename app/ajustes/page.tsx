@@ -5,7 +5,7 @@ import TopNavbar from '@/components/TopNavbar';
 import { useReading } from '@/context/ReadingContext';
 
 export default function AjustesPage() {
-  const { resetProgress, exportData, importData } = useReading();
+  const { resetProgress, exportData, importData, fontSize, changeFontSize } = useReading();
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,12 +19,42 @@ export default function AjustesPage() {
     reader.readAsText(file);
   };
 
+  // Opciones de tamaño de texto
+  const fontSizes = [
+    { label: 'A', size: 14, name: 'Pequeño' },
+    { label: 'A', size: 16, name: 'Normal' },
+    { label: 'A', size: 18, name: 'Grande' },
+    { label: 'A', size: 20, name: 'Extra Grande' },
+  ];
+
   return (
     <main className="min-h-screen">
       <TopNavbar />
       <div className="pt-24 pb-10 px-6 max-w-lg mx-auto">
         <h1 className="text-2xl font-bold mb-8 text-[#B68D2C]">Ajustes</h1>
 
+        {/* Tamaño de Texto */}
+        <div className="bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-[#8A6B1E]/20 mb-6">
+          <h2 className="text-lg font-semibold text-[#B68D2C] mb-4">Tamaño de Texto</h2>
+          <div className="grid grid-cols-4 gap-3">
+            {fontSizes.map((opt) => (
+              <button 
+                key={opt.size} 
+                onClick={() => changeFontSize(opt.size)}
+                className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all
+                  ${fontSize === opt.size 
+                    ? 'bg-[#8A6B1E]/20 border-[#8A6B1E] text-[#B68D2C]' 
+                    : 'bg-white/5 border-white/10 text-white/70 hover:border-[#8A6B1E]/50'}
+                `}
+              >
+                <span className="font-bold" style={{ fontSize: `${opt.size + 4}px` }}>{opt.label}</span>
+                <span className="text-[10px] mt-1 font-mono">{opt.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Copia de Seguridad */}
         <div className="bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-[#8A6B1E]/20 mb-6">
           <h2 className="text-lg font-semibold text-[#B68D2C] mb-4">Copia de Seguridad</h2>
           <p className="text-white/70 text-sm mb-6">Exporta tu progreso como un archivo para migrarlo a otro dispositivo.</p>
@@ -39,6 +69,7 @@ export default function AjustesPage() {
           </div>
         </div>
 
+        {/* Zona de Peligro */}
         <div className="bg-red-500/10 p-6 rounded-2xl backdrop-blur-sm border border-red-500/20">
           <h2 className="text-lg font-semibold text-red-400 mb-2">Zona de Peligro</h2>
           <p className="text-white/70 text-sm mb-6">Esto borrará todo tu progreso de lectura.</p>
