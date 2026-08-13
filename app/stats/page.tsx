@@ -8,14 +8,12 @@ export default function StatsPage() {
   
   const totalRead = getTotalReadCount();
   const totalChapters = 1189;
-  const percentage = totalChapters > 0 ? Math.round((totalRead / totalChapters) * 100) : 0;
+  const percentage = totalRead > 0 ? Math.round((totalRead / totalChapters) * 100) : 0;
 
-  // Lógica para calcular la Racha (Streak)
   const calculateStreaks = () => {
-    const uniqueDates = [...new Set(Object.values(readings))]; // Eliminar duplicados
+    const uniqueDates = [...new Set(Object.values(readings))];
     if (uniqueDates.length === 0) return { currentStreak: 0, bestStreak: 0 };
 
-    // Convertir "DD/MM/YYYY" a objetos Date y ordenar de mayor a menor
     const parsedDates = uniqueDates.map(d => {
       const p = d.split('/').map(Number);
       return new Date(p[2], p[1] - 1, p[0]);
@@ -30,7 +28,6 @@ export default function StatsPage() {
     let bestStreak = 1;
     let tempStreak = 1;
 
-    // Comprobar si el día más reciente es hoy o ayer (racha activa)
     if (parsedDates[0].getTime() === today.getTime() || parsedDates[0].getTime() === yesterday.getTime()) {
       currentStreak = 1;
       for (let i = 1; i < parsedDates.length; i++) {
@@ -38,11 +35,10 @@ export default function StatsPage() {
         if (diffDays === 1) {
           currentStreak++;
           tempStreak++;
-        } else break; // Se rompió la secuencia
+        } else break;
       }
     }
 
-    // Calcular la mejor racha histórica
     tempStreak = 1;
     for (let i = 1; i < parsedDates.length; i++) {
       const diffDays = Math.round((parsedDates[i-1].getTime() - parsedDates[i].getTime()) / (1000 * 60 * 60 * 24));
@@ -63,18 +59,18 @@ export default function StatsPage() {
     <main className="min-h-screen">
       <TopNavbar />
       <div className="pt-24 pb-10 px-6 max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-6 text-yellow-700">Estadísticas</h1>
+        <h1 className="text-2xl font-bold mb-6 text-[#B68D2C]">Estadísticas</h1>
 
-        <div className="bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-yellow-900/20 mb-6 text-center">
+        <div className="bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-[#8A6B1E]/20 mb-6 text-center">
           <h2 className="text-lg text-white/80 mb-2">Progreso Total de la Biblia</h2>
-          <div className="text-6xl font-bold text-yellow-700 mb-2">{percentage}%</div>
+          <div className="text-6xl font-bold text-[#B68D2C] mb-2">{percentage}%</div>
           <p className="text-white/60">{totalRead} de {totalChapters} capítulos leídos</p>
           <div className="w-full bg-black/30 rounded-full h-3 mt-4">
-            <div className="bg-yellow-800 h-3 rounded-full transition-all" style={{ width: `${percentage}%` }}></div>
+            <div className="bg-[#8A6B1E] h-3 rounded-full transition-all" style={{ width: `${percentage}%` }}></div>
           </div>
         </div>
 
-        <div className="bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-yellow-900/20">
+        <div className="bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-[#8A6B1E]/20">
           <h2 className="text-lg text-white/80 mb-6">Hábito de Lectura</h2>
           <div className="flex justify-around items-center">
             <div className="flex flex-col items-center">
