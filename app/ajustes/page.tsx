@@ -23,13 +23,13 @@ export default function AjustesPage() {
     <main className="min-h-screen">
       <TopNavbar />
       <div className="pt-24 pb-10 px-6 max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-8 text-yellow-700">Ajustes</h1>
+        <h1 className="text-2xl font-bold mb-8 text-[#B68D2C]">Ajustes</h1>
 
-        <div className="bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-yellow-900/20 mb-6">
-          <h2 className="text-lg font-semibold text-yellow-700 mb-4">Copia de Seguridad</h2>
+        <div className="bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-[#8A6B1E]/20 mb-6">
+          <h2 className="text-lg font-semibold text-[#B68D2C] mb-4">Copia de Seguridad</h2>
           <p className="text-white/70 text-sm mb-6">Exporta tu progreso como un archivo para migrarlo a otro dispositivo.</p>
           <div className="flex flex-col gap-4">
-            <button onClick={exportData} className="w-full bg-yellow-800 hover:bg-yellow-700 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
+            <button onClick={exportData} className="w-full bg-[#8A6B1E] hover:bg-[#B68D2C] text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
               Exportar Datos
             </button>
             <label className="w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer">
