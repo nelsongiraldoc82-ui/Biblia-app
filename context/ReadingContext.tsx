@@ -2,8 +2,6 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-// Definimos cómo se ven nuestros datos guardados
-// Ejemplo: { "gen_1": "12/08/2026", "exo_5": "13/08/2026" }
 type Readings = Record<string, string>;
 
 interface ReadingContextType {
@@ -16,28 +14,33 @@ interface ReadingContextType {
   resetProgress: () => void;
   exportData: () => void;
   importData: (jsonString: string) => void;
+  fontSize: number;
+  changeFontSize: (size: number) => void;
 }
 
 const ReadingContext = createContext<ReadingContextType | undefined>(undefined);
 
 export function ReadingProvider({ children }: { children: ReactNode }) {
   const [readings, setReadings] = useState<Readings>({});
+  const [fontSize, setFontSize] = useState<number>(16); // 16px es el tamaño normal por defecto
 
   // Cargar datos de localStorage al iniciar
   useEffect(() => {
     const savedData = localStorage.getItem('biblia-reading-data');
     if (savedData) {
-      try {
-        setReadings(JSON.parse(savedData));
-      } catch (e) {
-        console.error("Error al leer datos guardados", e);
-      }
+      try { setReadings(JSON.parse(savedData)); } catch (e) { console.error("Error leyendo datos", e); }
+    }
+    const savedFontSize = localStorage.getItem('biblia-font-size');
+    if (savedFontSize) {
+      const size = parseInt(savedFontSize);
+      setFontSize(size);
+      document.documentElement.style.fontSize = `${size}px`; // Aplicar al HTML raíz
     }
   }, []);
 
-  // Guardar en localStorage cada vez que cambien los datos
+  // Guardar lecturas en localStorage
   useEffect(() => {
-    if (Object.keys(readings).length > 0) {
+    if (Object.keys(readings).length > 0 || localStorage.getItem('biblia-reading-data')) {
       localStorage.setItem('biblia-reading-data', JSON.stringify(readings));
     }
   }, [readings]);
@@ -48,30 +51,16 @@ export function ReadingProvider({ children }: { children: ReactNode }) {
     const key = `${bookId}_${chapter}`;
     setReadings(prev => {
       const newReadings = { ...prev };
-      if (newReadings[key]) {
-        delete newReadings[key]; // Si ya estaba leído, lo borramos
-      } else {
-        newReadings[key] = today; // Si no, lo marcamos con la fecha de hoy
-      }
+      if (newReadings[key]) { delete newReadings[key]; } 
+      else { newReadings[key] = today; }
       return newReadings;
     });
   };
 
-  const isChapterRead = (bookId: string, chapter: number) => {
-    return !!readings[`${bookId}_${chapter}`];
-  };
-
-  const getChapterDate = (bookId: string, chapter: number) => {
-    return readings[`${bookId}_${chapter}`] || null;
-  };
-
-  const getReadCountForBook = (bookId: string) => {
-    return Object.keys(readings).filter(key => key.startsWith(`${bookId}_`)).length;
-  };
-
-  const getTotalReadCount = () => {
-    return Object.keys(readings).length;
-  };
+  const isChapterRead = (bookId: string, chapter: number) => !!readings[`${bookId}_${chapter}`];
+  const getChapterDate = (bookId: string, chapter: number) => readings[`${bookId}_${chapter}`] || null;
+  const getReadCountForBook = (bookId: string) => Object.keys(readings).filter(key => key.startsWith(`${bookId}_`)).length;
+  const getTotalReadCount = () => Object.keys(readings).length;
 
   const resetProgress = () => {
     setReadings({});
@@ -93,13 +82,18 @@ export function ReadingProvider({ children }: { children: ReactNode }) {
       const parsed = JSON.parse(jsonString);
       setReadings(parsed);
       alert('¡Backup restaurado con éxito!');
-    } catch (e) {
-      alert('Archivo inválido.');
-    }
+    } catch (e) { alert('Archivo inválido.'); }
+  };
+
+  // Función para cambiar tamaño de fuente global
+  const changeFontSize = (size: number) => {
+    setFontSize(size);
+    localStorage.setItem('biblia-font-size', size.toString());
+    document.documentElement.style.fontSize = `${size}px`; // Aplica el tamaño al <html>
   };
 
   return (
-    <ReadingContext.Provider value={{ readings, toggleChapter, isChapterRead, getChapterDate, getReadCountForBook, getTotalReadCount, resetProgress, exportData, importData }}>
+    <ReadingContext.Provider value={{ readings, toggleChapter, isChapterRead, getChapterDate, getReadCountForBook, getTotalReadCount, resetProgress, exportData, importData, fontSize, changeFontSize }}>
       {children}
     </ReadingContext.Provider>
   );
